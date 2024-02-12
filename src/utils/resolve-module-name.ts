@@ -150,7 +150,8 @@ export function resolveModuleName(context: VisitorContext, moduleName: string): 
   /* Determine output filename */
   let outputBaseName = resolvedBaseNameNoExtension ?? "";
 
-  if (indexType === IndexType.Implicit) outputBaseName = outputBaseName.replace(/(\/index$)|(^index$)/, "");
+  if (indexType === IndexType.Implicit && !context.config.addIndexWhenImplicit)
+    outputBaseName = outputBaseName.replace(/(\/index$)|(^index$)/, "");
   if (outputBaseName && extName) outputBaseName = `${outputBaseName}${extName}`;
 
   /* Determine output dir */

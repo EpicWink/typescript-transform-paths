@@ -19,6 +19,7 @@ export type ImportOrExportClause = ts.ImportDeclaration["importClause"] | ts.Exp
 export interface TsTransformPathsConfig extends PluginConfig {
   readonly useRootDirs?: boolean;
   readonly exclude?: string[];
+  readonly addIndexWhenImplicit?: boolean;
 }
 
 // endregion
