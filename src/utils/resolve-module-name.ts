@@ -144,15 +144,28 @@ export function resolveModuleName(context: VisitorContext, moduleName: string): 
 
   const resolvedSourceFile = getResolvedSourceFile(context, resolvedModule.resolvedFileName);
 
-  const { indexType, resolvedBaseNameNoExtension, resolvedFileName, implicitPackageIndex, extName, resolvedDir } =
-    getPathDetail(moduleName, resolvedModule);
+  const {
+    indexType,
+    resolvedBaseNameNoExtension,
+    resolvedFileName,
+    resolvedExtName,
+    implicitPackageIndex,
+    extName,
+    resolvedDir,
+  } = getPathDetail(moduleName, resolvedModule);
 
   /* Determine output filename */
   let outputBaseName = resolvedBaseNameNoExtension ?? "";
 
   if (indexType === IndexType.Implicit && !context.config.addIndexWhenImplicit)
     outputBaseName = outputBaseName.replace(/(\/index$)|(^index$)/, "");
-  if (outputBaseName && extName) outputBaseName = `${outputBaseName}${extName}`;
+  if (outputBaseName && extName && (indexType !== IndexType.Implicit || context.config.addIndexWhenImplicit))
+    outputBaseName = `${outputBaseName}${extName}`;
+  else if (outputBaseName && resolvedExtName && context.config.addIndexWhenImplicit)
+    outputBaseName = `${outputBaseName}${resolvedExtName}`;
+  if (!outputBaseName && indexType === IndexType.ImplicitPackage && context.config.addIndexWhenImplicit) {
+    outputBaseName = "index.js";
+  }
 
   /* Determine output dir */
   let srcFileOutputDir = getOutputDirForSourceFile(context, sourceFile);
